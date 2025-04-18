@@ -39,7 +39,7 @@
       e.preventDefault();
       const formData = new FormData(e.target);
       try {
-        const response = await fetch("http://localhost:8080/blog-api/register", {
+        const response = await fetch("https://fu163.github.io/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -52,6 +52,30 @@
         alert(result.message);
       } catch (error) {
         alert("注册失败：请确保后端服务已启动");
+      }
+    });
+
+    // 登录功能（适配GitHub Pages）
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      try {
+        const response = await fetch("https://fu163.github.io/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: formData.get("username"),
+            password: formData.get("password")
+          })
+        });
+        const result = await response.json();
+        if (result.message === "登录成功") {
+          window.location.href = "https://fu163.github.io/";
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        alert("登录失败：请确保后端服务已启动");
       }
     });
   </script>
