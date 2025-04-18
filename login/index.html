@@ -1,38 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>登录页面 | Fesilia&#39;s world</title>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f4f4f9; }
-    .login-box {
-      width: 300px; margin: 100px auto; padding: 20px;
-      background: #fff; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input { width: 100%; padding: 10px; margin: 10px 0; }
-    button { background: #0078e7; color: white; border: none; padding: 10px; width: 100%; }
-  </style>
-</head>
-<body>
-  <div class="login-box">
+<div class="auth-container">
+  <!-- 登录表单（原有） -->
+  <div class="login-form">
     <h2>登录</h2>
-    <form id="login-form">
+    <form id="loginForm">...</form>
+  </div>
+
+  <!-- 新增注册表单 -->
+  <div class="register-form">
+    <h2>注册</h2>
+    <form id="registerForm">
       <input type="text" name="username" placeholder="学号" required>
       <input type="password" name="password" placeholder="密码" required>
-      <button type="submit">登录</button>
+      <input type="text" name="name" placeholder="真实姓名" required>
+      <button type="submit">注册</button>
     </form>
   </div>
-  <script>
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const response = await fetch("http://localhost:8080/your-project/login", {
-        method: "POST",
-        body: JSON.stringify({ username: formData.get("username"), password: formData.get("password") }),
-        headers: { "Content-Type": "application/json" }
-      });
-      const result = await response.json();
-      alert(result.message);
+</div>
+
+<script>
+  // 注册表单提交
+  document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const response = await fetch("http://localhost:8080/your-project/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: formData.get("username"),
+        password: formData.get("password"),
+        name: formData.get("name")
+      })
     });
-  </script>
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"live2d-widget-model-<live2d-widget-model-tororo>"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
-</html>
+    const result = await response.json();
+    alert(result.message);
+  });
+</script>
+
+<style>
+  .auth-container {
+    display: flex;
+    justify-content: space-around;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .login-form, .register-form {
+    width: 45%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+</style>
