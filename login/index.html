@@ -8,6 +8,7 @@
     body {
       margin: 0;
       padding: 0;
+      /* 背景图片地址需替换为有效URL，否则会报错（如示例中的地址无法访问） */
       background: url('https://example.com/your-bg-image.jpg') no-repeat center center fixed; 
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -79,6 +80,7 @@
     </div>
   </div>
   <script>
+    // 选项卡切换逻辑
     document.querySelector('a[href="#register"]').addEventListener('click', () => {
       document.getElementById('login').style.display = 'none';
       document.getElementById('register').style.display = 'block';
@@ -87,7 +89,8 @@
       document.getElementById('login').style.display = 'block';
       document.getElementById('register').style.display = 'none';
     });
-    // 登录表单提交
+
+    // 登录表单提交逻辑（新增跳转功能）
     document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
       fetch('http://localhost:3000/login', {
@@ -99,11 +102,22 @@
           email: document.getElementById('email').value,
           password: document.getElementById('password').value
         })
-      }).then(res => res.json()).then(data => {
-        alert(data.message);
+      })
+      .then(res => res.json())
+      .then(data => {
+        // 关键修改：根据后端返回的redirectUrl跳转
+        if (data.success) {
+          window.location.href = data.redirectUrl; // 登录成功后跳转
+        }
+        alert(data.message); // 提示框（可移除或调整顺序）
+      })
+      .catch(error => {
+        console.error('登录请求失败:', error);
+        alert('登录失败，请检查网络或重试');
       });
     });
-    // 注册表单提交
+
+    // 注册表单提交逻辑（可选：注册成功后可添加跳转）
     document.getElementById('registerForm').addEventListener('submit', (e) => {
       e.preventDefault();
       fetch('http://localhost:3000/register', {
@@ -115,8 +129,16 @@
           email: document.getElementById('regEmail').value,
           password: document.getElementById('regPassword').value
         })
-      }).then(res => res.json()).then(data => {
+      })
+      .then(res => res.json())
+      .then(data => {
         alert(data.message);
+        // 可选：注册成功后跳转至登录页
+        // if (data.message === '注册成功') window.location.href = '#login';
+      })
+      .catch(error => {
+        console.error('注册请求失败:', error);
+        alert('注册失败，请检查邮箱格式或重试');
       });
     });
   </script>
